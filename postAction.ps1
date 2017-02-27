@@ -1,6 +1,10 @@
 ﻿# Helper for VSTO deploy, post action
 # CWD is project folder of the addin
 #
+# Refrence
+#   Put the document of a solution onto the end user's computer (document-level customizations only)
+#   https://msdn.microsoft.com/en-us/library/vs/alm/bb772100(v=vs.120).aspx# 
+#
 # Accepts fully qualified postAction class as parameter
 # Optionaly accepts version number (defaults to 1.0.0.0)
 # Adds a postActions Node to the current version of the application manifest
@@ -50,12 +54,13 @@ $CurrentApplicationManifestPath = Join-Path $publishPath $deploymentManifest.ass
 $doc = $CurrentApplicationManifest
 
 [xml]$doc = @"
-<xml xmlns:vstav3="urn:schemas-microsoft-com:vsta.v3">
+<xml xmlns:vstav3="urn:schemas-microsoft-com:vsta.v3"
+    xmlns:asmv2="urn:schemas-microsoft-com:asm.v2">
     <vstav3:postActions>
       <vstav3:postAction>
         <vstav3:entryPoint
           class="FileCopyPDA.FileCopyPDA">
-          <assemblyIdentity
+          <asmv2:assemblyIdentity
             name="FileCopyPDA"
             version="1.0.0.0"
             language="neutral"
@@ -78,7 +83,7 @@ $assemblyIdentity.version = $postActionVer
 $sw=New-Object System.Io.Stringwriter
 $writer=New-Object System.Xml.XmlTextWriter($sw)
 $writer.Formatting = [System.Xml.Formatting]::Indented
-$doc.WriteContentTo($writer)
+$postActionsNode.WriteContentTo($writer)
 $sw.ToString()
 
 # Replace any existing version
@@ -101,3 +106,6 @@ mage -sign $CurrentApplicationManifestPath -certfile $Certificate.FullName
 
 #  update the deployment manifest trust
 mage -update $deploymentManifestFile.FullName  -appmanifest $CurrentApplicationManifestPath -certfile $Certificate.FullName
+
+# Copy the .vsto file to the current version Application Files folder
+$deploymentManifestFile.CopyTo($publishFolder, $true)

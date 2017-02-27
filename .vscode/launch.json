@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch (current file)",
+            "script": "${file}",
+            "args": ["FileCopyPDA.FileCopyPDA"],
+            "cwd": "C:\\Users\\Admin\\Documents\\Visual Studio 2017\\Projects\\WeekEndingTabs\\WeekEndingTabs"
+        },
+        {
+            "type": "PowerShell",
+            "request": "attach",
+            "name": "PowerShell Attach to Host Process",
+            "processId": "${command.PickPSHostProcess}",
+            "runspaceId": 1
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Interactive Session",
+            "cwd": ""
+        }
+    ]
+}
